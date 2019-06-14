@@ -67,7 +67,13 @@ public class gestion_des_notes extends javax.swing.JFrame {
         stm= conn.obtenirconnexion().createStatement();
         ResultSet rs=stm.executeQuery("Select * from etudient");
         while(rs.next()){
-            model.addRow(new Object[]{rs.getString("id"),rs.getString("Nom"),rs.getString("Prenom"),rs.getString("branche"),rs.getString("note")});
+            model.addRow(new Object[]{
+                rs.getString("id"),
+                rs.getString("Nom"),
+                rs.getString("Prenom"),
+                rs.getString("branche"),
+                rs.getString("note")
+            });
         }
         }catch(Exception e){System.err.println(e);}
     tble.setModel(model);
@@ -374,10 +380,11 @@ private void tbleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 }//GEN-LAST:event_tbleMouseClicked
 
 private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    Crypt crypto = new Crypt();
     String id = txtid.getText();
-    String nom = txtno.getText();
-    String prenom = txtpr.getText();
-    String branche = txtbr.getSelectedItem().toString();
+    String nom = crypto.encrypt(txtno.getText(),"maison");  
+    String prenom = crypto.encrypt(txtpr.getText(),"maison");
+    String branche = crypto.encrypt(txtbr.getSelectedItem().toString(),"maison");
     String note = txtnot.getText();
     
     String requete="insert into etudient (id,Nom,Prenom,branche,note) VALUES('"+id+"','"+nom+"','"+prenom+"','"+branche+"','"+note+"')";
@@ -395,6 +402,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
     try {
+        
         if (JOptionPane.showConfirmDialog (null,"confirmer la modification","modification",JOptionPane.YES_NO_CANCEL_OPTION)==JOptionPane.OK_OPTION){
             stm.executeUpdate("UPDATE etudient set Nom='"+txtno.getText()+"',prenom='"+txtpr.getText()+"',branche='"+txtbr.getSelectedItem().toString()+"',note='"+txtnot.getText()+"' WHERE id="+txtid.getText());
             afficher();
